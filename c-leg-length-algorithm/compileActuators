@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+clear
+gcc actuators.c -o actuators -lm
+./actuators

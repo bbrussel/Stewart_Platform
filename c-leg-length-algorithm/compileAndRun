@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+clear
+gcc stewart.c -o stewart -lm
+./stewart
