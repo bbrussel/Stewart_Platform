@@ -44,12 +44,12 @@ class Orientation {
 };
 
 
-float baseRadius = 220;
-float platformRadius = 220;
+float baseRadius = 225;
+float platformRadius = 225;
 float actuatorClosedLength = 152.0;
 float actuatorFullLength = 252.0;
-float baseAnchorAngleDegrees = 32.0;
-float platformAnchorAngleDegrees = 50.0;
+float baseAnchorAngleDegrees = 60.0;
+float platformAnchorAngleDegrees = 24.0;
 float refRotationDegrees = 0.0;
 
 float actuatorHomeLength;

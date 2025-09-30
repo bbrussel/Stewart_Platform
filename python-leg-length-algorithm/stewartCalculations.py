@@ -54,8 +54,6 @@ def calcPsiB(baseAnchorAngleDegrees, refRotationDegrees):
 		2*pi/3 + 2*pi/3 - gamma_B, 
 		2*pi/3 + 2*pi/3 + gamma_B])
 
-
-
 	psi_B = psi_B + np.repeat(ref_rotation, 6) #this is adding ref_rotation in radians to each value in the psi_B array
 
 

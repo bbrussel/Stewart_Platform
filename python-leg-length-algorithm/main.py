@@ -56,16 +56,16 @@ actuateLegs = False
 comport = "COM4"
 
 assemblyGeometry = SP_assemblyGeometry()
-assemblyGeometry.r_B = 130           # Base radius
-assemblyGeometry.r_P = 130           # Platform Radius
-assemblyGeometry.actuatorClosedLength = 102
-assemblyGeometry.actuatorFullLength = 152
+assemblyGeometry.r_B = 225           # Base radius
+assemblyGeometry.r_P = 225           # Platform Radius
+assemblyGeometry.actuatorClosedLength = 152
+assemblyGeometry.actuatorFullLength = 252
 
-assemblyGeometry.actuatorStrokeFaultMargin = .03
+assemblyGeometry.actuatorStrokeFaultMargin = .01
 assemblyGeometry.actuatorStrokeWarningMargin = .1
 
-assemblyGeometry.baseAnchorAngleDegrees = 32 # angle from center out to leg pair in degrees
-assemblyGeometry.platformAnchorAngleDegrees = 50 # angle from center out to leg pair in degrees
+assemblyGeometry.baseAnchorAngleDegrees = 60 # full angle from center out to leg pair in degrees
+assemblyGeometry.platformAnchorAngleDegrees = 24 # full angle from center out to leg pair in degrees
 assemblyGeometry.refRotationDegrees = 0    # Assembly oriention around z axis
 
 #Calculated Variables:
@@ -92,17 +92,17 @@ def demo():
 	platformOrientation = orientation() #Initialize orientation class for platform
 	platformOrientation.xTranslation = 0
 	platformOrientation.yTranslation = 0
-	platformOrientation.zTranslation = 0
+	platformOrientation.zTranslation = -54
 
 	platformOrientation.pitchDegrees = 0
 	platformOrientation.rollDegrees = 0
 	platformOrientation.yawDegrees = 0
 
 	baseOrientation = orientation() #Initialize orientation class for base
-	baseOrientation.xTranslation = 0 #Not sure these are relevant for the base, but are included in the algorithm anyways.
-	baseOrientation.yTranslation = 0 #Not sure these are relevant for the base, but are included in the algorithm anyways.
-	baseOrientation.zTranslation = 0 #Not sure these are relevant for the base, but are included in the algorithm anyways.
-	baseOrientation.pitchDegrees = 0 
+	baseOrientation.xTranslation = 0
+	baseOrientation.yTranslation = 0
+	baseOrientation.zTranslation = 0
+	baseOrientation.pitchDegrees = 0
 	baseOrientation.rollDegrees = 0
 	baseOrientation.yawDegrees = 0
 
@@ -117,11 +117,6 @@ def demo():
 		else:
 			printy("Aborting actuation command to fault leg lengths", "rB")
 
-
-
-
 	plt.show()
-
-
 
 demo()
