@@ -131,22 +131,47 @@ def demo():
 	platformOrientation.yawDegrees = 0.0
 	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
-
-	platformOrientation.xTranslation = 0.0
-	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 0.0
-	platformOrientation.pitchDegrees = 10.0
-	platformOrientation.rollDegrees = 0.0
-	platformOrientation.yawDegrees = 0.0
+	platformOrientation.zTranslation = 30.0
 	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
-	platformOrientation.xTranslation = 0.0
-	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 0.0
-	platformOrientation.pitchDegrees = -10.0
-	platformOrientation.rollDegrees = 0.0
-	platformOrientation.yawDegrees = 0.0
+	platformOrientation.zTranslation = 20.0
 	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	platformOrientation.zTranslation = 10.0
+	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	platformOrientation.zTranslation = 0.0
+	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	platformOrientation.zTranslation = -10.0
+	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+
+	# platformOrientation.pitchDegrees = 10.0
+	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	# platformOrientation.pitchDegrees = -10.0
+	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	# platformOrientation.pitchDegrees = -5.0
+	# platformOrientation.rollDegrees = 3.0
+	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	# platformOrientation.zTranslation = 3.0
+	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	# platformOrientation.zTranslation = 6.0
+	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	# platformOrientation.zTranslation = 9.0
+	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	# platformOrientation.pitchDegrees = -8.0
+	# platformOrientation.rollDegrees = 1.0
+	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	# platformOrientation.zTranslation = 15.0
+	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	platformOrientation.xTranslation = 0.0
 	platformOrientation.yTranslation = 0.0
@@ -155,6 +180,7 @@ def demo():
 	platformOrientation.rollDegrees = 0.0
 	platformOrientation.yawDegrees = 0.0
 	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
 
 	print("Closing serial port")
 	ser.close()
