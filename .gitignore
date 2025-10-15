@@ -1,0 +1,55 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+*.log
+*.sqlite3
+.env
+venv/
+.env/
+.venv/
+*.bak
+*.swp
+
+# Jupyter and other Python tooling
+.ipynb_checkpoints/
+.mypy_cache/
+.pytest_cache/
+.cache/
+
+# --- Arduino ---
+*.hex
+*.elf
+*.bin
+*.eep
+*.dmp
+*.o
+*.obj
+*.map
+*.a
+*.lst
+*.srec
+
+# Arduino build folders
+build/
+*.arduino-build/
+*.arduino-sketch/
+
+# --- General ---
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# --- Optional ---
+# Ignore all TIFF images or other large data files
+*.tiff
+*.tif
+
+# VSCode or IDE config (optional)
+.vscode/
+.idea/
