@@ -1,24 +1,13 @@
 #!/usr/bin/env python3
 from printy import printy
 
-# def sendActuationCommand(legLengths, assemblyGeometry, ser):
-# 	printy("Sending actuation command", "cB")
-# 	commandString = ",".join(f"{x:.1f}" for x in legLengths)
-# 	ser.flush()
-# 	ser.write(commandString.encode('utf-8'))
-# 	print(commandString)
-# 	return ser
-
 def sendActuationCommand(legLengths, assemblyGeometry, ser):
-    # Make a CSV with one decimal and a newline terminator the Arduino expects
     command = ",".join(f"{x:.1f}" for x in legLengths) + "\n"   # or "\r\n" to match your sketch
     
-    # Clear any backlog from Arduino’s continuous status prints
     if ser.in_waiting:
         ser.reset_input_buffer()
     ser.reset_output_buffer()  # clear pending writes just in case
 
-    # Write and ensure it actually leaves the OS buffer
     ser.write(command.encode("ascii"))
     ser.flush()
 

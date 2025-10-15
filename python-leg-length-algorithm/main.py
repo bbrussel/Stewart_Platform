@@ -80,6 +80,29 @@ assemblyGeometry.faultMinLength = assemblyGeometry.actuatorClosedLength + assemb
 assemblyGeometry.faultMaxLength = assemblyGeometry.actuatorFullLength - assemblyGeometry.stroke*assemblyGeometry.actuatorStrokeFaultMargin
 
 
+def processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs):
+	L, legLengths, B, PV, dataString = stewartCalculations.PerformCalcs(baseOrientation=baseOrientation, platformOrientation=platformOrientation, assemblyGeometry=assemblyGeometry)
+
+	if actuateLegs:
+		if (actuatorCommander.validateLegLengths(legLengths, assemblyGeometry)):
+			# ser = actuatorCommander.sendActuationCommandSingleLegWFeedback(legLengths, assemblyGeometry, ser)
+			ser = actuatorCommander.sendActuationCommand(legLengths, assemblyGeometry, ser)
+		else:
+			printy("Aborting actuation command to fault leg lengths", "rB")
+	else:
+		printy("Not actuating legs because actuateLegs flag is set to False", "rB")
+		print(",".join(f"{x:.1f}" for x in legLengths))
+
+	if generatePlot:
+		plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, L=L, legLengths=legLengths, B=B, PV=PV, dataString=dataString, assemblyGeometry=assemblyGeometry)
+	else:
+		printy("Not generating plots because generatePlots flag is set to False", "rB")
+		input("Press Enter to continue to next pose...")
+
+
+	plt.show()
+	return ser
+
 def demo():
 
 	if actuateLegs == True:
@@ -89,16 +112,6 @@ def demo():
 		# ser = actuatorCommander.sendHome(assemblyGeometry, ser)
 		# ser = actuatorCommander.sendHomeSingleLegWFeedback(assemblyGeometry, ser)
 
-
-	platformOrientation = orientation() #Initialize orientation class for platform
-	platformOrientation.xTranslation = 0.0
-	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 0.0
-
-	platformOrientation.pitchDegrees = 0.0
-	platformOrientation.rollDegrees = 0.0
-	platformOrientation.yawDegrees = 0.0
-
 	baseOrientation = orientation() #Initialize orientation class for base
 	baseOrientation.xTranslation = 0
 	baseOrientation.yTranslation = 0
@@ -107,29 +120,46 @@ def demo():
 	baseOrientation.rollDegrees = 0
 	baseOrientation.yawDegrees = 0
 
-
-	L, legLengths, B, PV, dataString = stewartCalculations.PerformCalcs(baseOrientation=baseOrientation, platformOrientation=platformOrientation, assemblyGeometry=assemblyGeometry)
-
-	if generatePlot:
-		plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, L=L, legLengths=legLengths, B=B, PV=PV, dataString=dataString, assemblyGeometry=assemblyGeometry)
-	else:
-		printy("Not generating plots because generatePlots flag is set to False", "rB")
-
-	if actuateLegs:
-		if (actuatorCommander.validateLegLengths(legLengths, assemblyGeometry)):
-			# ser = actuatorCommander.sendActuationCommandSingleLegWFeedback(legLengths, assemblyGeometry, ser)
-			ser = actuatorCommander.sendActuationCommand(legLengths, assemblyGeometry, ser)
-		else:
-			printy("Aborting actuation command to fault leg lengths", "rB")
-		print("Closing serial port")
-		ser.close()
-	else:
-		printy("Not actuating legs because actuateLegs flag is set to False", "rB")
-		print(",".join(f"{x:.1f}" for x in legLengths))
+	platformOrientation = orientation() #Initialize orientation class for platform
 
 
-	plt.show()
-	printy("Done...", "CB")
+	platformOrientation.xTranslation = 0.0
+	platformOrientation.yTranslation = 0.0
+	platformOrientation.zTranslation = 0.0
+	platformOrientation.pitchDegrees = 0.0
+	platformOrientation.rollDegrees = 0.0
+	platformOrientation.yawDegrees = 0.0
+	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+
+	platformOrientation.xTranslation = 0.0
+	platformOrientation.yTranslation = 0.0
+	platformOrientation.zTranslation = 0.0
+	platformOrientation.pitchDegrees = 10.0
+	platformOrientation.rollDegrees = 0.0
+	platformOrientation.yawDegrees = 0.0
+	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	platformOrientation.xTranslation = 0.0
+	platformOrientation.yTranslation = 0.0
+	platformOrientation.zTranslation = 0.0
+	platformOrientation.pitchDegrees = -10.0
+	platformOrientation.rollDegrees = 0.0
+	platformOrientation.yawDegrees = 0.0
+	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	platformOrientation.xTranslation = 0.0
+	platformOrientation.yTranslation = 0.0
+	platformOrientation.zTranslation = 0.0
+	platformOrientation.pitchDegrees = 0.0
+	platformOrientation.rollDegrees = 0.0
+	platformOrientation.yawDegrees = 0.0
+	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	print("Closing serial port")
+	ser.close()
+
+	printy("Done...", "cB")
 
 
 demo()
