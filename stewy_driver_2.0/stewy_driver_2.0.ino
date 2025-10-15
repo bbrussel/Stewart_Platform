@@ -22,7 +22,6 @@ int telemetryCounter = 0;
 float feedbackCalibrationMultiplier = .9896;
 float feedbackCalibrationConstant = -7.7794;
 
-
 float actuatorClosedLength = 152.0;
 float actuatorFullLength = 252.0;
 float strokeEndBuffer = 3.0;
@@ -130,28 +129,25 @@ void getFeedback(){
 }
 
 void loop() {
-    // if (Serial.available() > 0){
+    if (Serial.available() > 0){
       
-    //   String commandedLegLengths = Serial.readString();
-    //   parse_leg_length_command(commandedLegLengths);
+      String commandedLegLengths = Serial.readString();
+      parse_leg_length_command(commandedLegLengths);
 
-    //   if ((statusCode == 1) & (outOfRangeFlag == false)) {
-    //     sendPositionToActuators();
-    //     for (int i = 0; i < 6; i++) {
-    //       lastCommandedLegLengths[i] = legLengths[i];
-    //     }
-    //   }
-    // }
+      if ((statusCode == 1) & (outOfRangeFlag == false)) {
+        // Serial.println("Sending Command to Actuators...");
+        sendPositionToActuators();
+        for (int i = 0; i < 6; i++) {
+          lastCommandedLegLengths[i] = legLengths[i];
+        }
+      } else {
+        Serial.println("Invalid");
+      }
+    }
 
     getFeedback();
-
     sendTelemetryPacket();
-
     telemetryCounter++;
-
-
-   
     delay(50);
-
 
 }

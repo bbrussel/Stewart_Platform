@@ -1,7 +1,6 @@
 #!/usr/bin/env python3 
 import numpy as np
 import os
-import math
 import matplotlib.pyplot as plt
 import serial
 from printy import printy
@@ -52,12 +51,13 @@ class SP_assemblyGeometry():
 ######################################################################################################################################
 #Initialization Variables:
 
-actuateLegs = False
-comport = "COM4"
+actuateLegs = True
+generatePlot = False
+comport = "COM3"
 
 assemblyGeometry = SP_assemblyGeometry()
-assemblyGeometry.r_B = 225           # Base radius
-assemblyGeometry.r_P = 225           # Platform Radius
+assemblyGeometry.r_B = 215           # Base radius
+assemblyGeometry.r_P = 215           # Platform Radius
 assemblyGeometry.actuatorClosedLength = 152
 assemblyGeometry.actuatorFullLength = 252
 
@@ -80,23 +80,24 @@ assemblyGeometry.faultMinLength = assemblyGeometry.actuatorClosedLength + assemb
 assemblyGeometry.faultMaxLength = assemblyGeometry.actuatorFullLength - assemblyGeometry.stroke*assemblyGeometry.actuatorStrokeFaultMargin
 
 
-
 def demo():
 
 	if actuateLegs == True:
-		ser = serial.Serial(comport)
+		ser = serial.Serial(port=comport, baudrate=115200, timeout=0.1, write_timeout=0.5)
+		ser.reset_input_buffer()
+		ser.reset_output_buffer()
 		# ser = actuatorCommander.sendHome(assemblyGeometry, ser)
 		# ser = actuatorCommander.sendHomeSingleLegWFeedback(assemblyGeometry, ser)
 
 
 	platformOrientation = orientation() #Initialize orientation class for platform
-	platformOrientation.xTranslation = 0
-	platformOrientation.yTranslation = 0
-	platformOrientation.zTranslation = -54
+	platformOrientation.xTranslation = 0.0
+	platformOrientation.yTranslation = 0.0
+	platformOrientation.zTranslation = 0.0
 
-	platformOrientation.pitchDegrees = 0
-	platformOrientation.rollDegrees = 0
-	platformOrientation.yawDegrees = 0
+	platformOrientation.pitchDegrees = 0.0
+	platformOrientation.rollDegrees = 0.0
+	platformOrientation.yawDegrees = 0.0
 
 	baseOrientation = orientation() #Initialize orientation class for base
 	baseOrientation.xTranslation = 0
@@ -109,14 +110,26 @@ def demo():
 
 	L, legLengths, B, PV, dataString = stewartCalculations.PerformCalcs(baseOrientation=baseOrientation, platformOrientation=platformOrientation, assemblyGeometry=assemblyGeometry)
 
-	plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, L=L, legLengths=legLengths, B=B, PV=PV, dataString=dataString, assemblyGeometry=assemblyGeometry)
+	if generatePlot:
+		plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, L=L, legLengths=legLengths, B=B, PV=PV, dataString=dataString, assemblyGeometry=assemblyGeometry)
+	else:
+		printy("Not generating plots because generatePlots flag is set to False", "rB")
 
 	if actuateLegs:
 		if (actuatorCommander.validateLegLengths(legLengths, assemblyGeometry)):
-			ser = actuatorCommander.sendActuationCommandSingleLegWFeedback(legLengths, assemblyGeometry, ser)
+			# ser = actuatorCommander.sendActuationCommandSingleLegWFeedback(legLengths, assemblyGeometry, ser)
+			ser = actuatorCommander.sendActuationCommand(legLengths, assemblyGeometry, ser)
 		else:
 			printy("Aborting actuation command to fault leg lengths", "rB")
+		print("Closing serial port")
+		ser.close()
+	else:
+		printy("Not actuating legs because actuateLegs flag is set to False", "rB")
+		print(",".join(f"{x:.1f}" for x in legLengths))
+
 
 	plt.show()
+	printy("Done...", "CB")
+
 
 demo()
