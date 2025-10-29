@@ -49,7 +49,7 @@ def plotLegs(ax, vec_arr_origin, vec_arr_dest, legLengths, assemblyGeometry):
 	return ax, legCollection, legLabels
 
 
-def generateDataString(platformOrientation, baseOrientation, legLengths, azimuth, elevation):
+def generateDataString(platformOrientation, baseOrientation, platform_coords, base_coords, legLengths, azimuth, elevation):
 
 	dataString = "Base:\n"
 	dataString += "Roll: " + "{0:.1f}".format(baseOrientation.rollDegrees) + "$^\circ$\n"
@@ -64,8 +64,11 @@ def generateDataString(platformOrientation, baseOrientation, legLengths, azimuth
 	dataString += "\u0394z: " + str(platformOrientation.zTranslation) + "\n"
 	dataString += "\nAz: " + "{0:.1f}".format(azimuth) + "$^\circ$\n"
 	dataString += "El: " + "{0:.1f}".format(elevation) + "$^\circ$\n"
+	
+	dataString += f"\nMax Z: {np.max(platform_coords[2, :]):.1f}\n"
+	dataString += f"Min Z: {np.min(platform_coords[2, :]):.1f}\n"
 
-	dataString += "\n"
+	dataString += "\nLeg Lengths:\n"
 	counter = 1
 	for leg in legLengths:
 		dataString += "(" + str(counter) + ") " +  "{0:.1f}".format(leg) + "\n"
@@ -73,10 +76,10 @@ def generateDataString(platformOrientation, baseOrientation, legLengths, azimuth
 
 	return dataString
 
-def generateAnimated3DPlot(ax, InitialViewElevationAngle, InitialViewAzimuthAngle, L, legLengths, B, PV, dataString, assemblyGeometry):
+def generateAnimated3DPlot(ax, InitialViewElevationAngle, InitialViewAzimuthAngle, platform_coords, legLengths, base_coords, PV, dataString, assemblyGeometry):
 
 	printy("Generating Animated Plot", "cB")
-	ax, basePoly, platformPoly, legCollection, legLabels = createAnimated3DModel(ax, B, L, legLengths, assemblyGeometry)
+	ax, basePoly, platformPoly, legCollection, legLabels = createAnimated3DModel(ax, base_coords, platform_coords, legLengths, assemblyGeometry)
 	plt.title("Stewart Platform")
 
 	return ax, basePoly, platformPoly, legCollection, legLabels
@@ -84,10 +87,10 @@ def generateAnimated3DPlot(ax, InitialViewElevationAngle, InitialViewAzimuthAngl
 
 
 
-def generate3DPlot(InitialViewElevationAngle, InitialViewAzimuthAngle, L, legLengths, B, PV, dataString, assemblyGeometry):
+def generate3DPlot(InitialViewElevationAngle, InitialViewAzimuthAngle, platform_coords, legLengths, base_coords, PV, dataString, assemblyGeometry):
 
 	printy("Generating Plot", "cB")
-	ax = create3DModel(B, L, legLengths, assemblyGeometry)
+	ax = create3DModel(base_coords, platform_coords, legLengths, assemblyGeometry)
 
 	for mem in plt.gcf().texts:
 		plt.gcf().texts.remove(mem)
@@ -111,9 +114,10 @@ def generate3DPlot(InitialViewElevationAngle, InitialViewAzimuthAngle, L, legLen
 	ax.view_init(elev=InitialViewElevationAngle, azim=InitialViewAzimuthAngle)
 
 
-def create3DModel(Base, L, legLengths, assemblyGeometry):
+def create3DModel(Base, platform_coords, legLengths, assemblyGeometry):
 	labelAxisTicks = False
-	ax = plt.axes(projection='3d') # Data for a three-dimensional line
+	fig = plt.figure(figsize=(8, 6))  # e.g. 8x6 inches
+	ax = fig.add_subplot(111, projection='3d')
 	ax.set_xlim3d(-assemblyGeometry.r_B, assemblyGeometry.r_B)
 	ax.set_ylim3d(-assemblyGeometry.r_B, assemblyGeometry.r_B)
 	ax.set_zlim3d(0, assemblyGeometry.r_B*1.5)
@@ -141,13 +145,13 @@ def create3DModel(Base, L, legLengths, assemblyGeometry):
 
 
 	ax.add_collection3d(Poly3DCollection([list(np.transpose(Base))], facecolors=baseFaceColor, alpha=baseAlpha, edgecolors=baseEdgeColor))
-	ax.add_collection3d(Poly3DCollection([list(np.transpose(L))], facecolors=platFormFaceColor, alpha=platformAlpha, edgecolors=platformEdgeColor))
-	plotLegs(ax, Base, L, legLengths, assemblyGeometry)
+	ax.add_collection3d(Poly3DCollection([list(np.transpose(platform_coords))], facecolors=platFormFaceColor, alpha=platformAlpha, edgecolors=platformEdgeColor))
+	plotLegs(ax, Base, platform_coords, legLengths, assemblyGeometry)
 
 	return ax
 
 
-def createAnimated3DModel(ax, Base, L, legLengths, assemblyGeometry):
+def createAnimated3DModel(ax, Base, platform_coords, legLengths, assemblyGeometry):
 	labelAxisTicks = False
 
 	ax.set_xlim3d(-assemblyGeometry.r_B, assemblyGeometry.r_B)
@@ -177,8 +181,8 @@ def createAnimated3DModel(ax, Base, L, legLengths, assemblyGeometry):
 
 
 	basePoly = ax.add_collection3d(Poly3DCollection([list(np.transpose(Base))], facecolors=baseFaceColor, alpha=baseAlpha, edgecolors=baseEdgeColor))
-	platformPoly = ax.add_collection3d(Poly3DCollection([list(np.transpose(L))], facecolors=platFormFaceColor, alpha=platformAlpha, edgecolors=platformEdgeColor))
-	ax, legCollection, legLabels = plotLegs(ax, Base, L, legLengths, assemblyGeometry)
+	platformPoly = ax.add_collection3d(Poly3DCollection([list(np.transpose(platform_coords))], facecolors=platFormFaceColor, alpha=platformAlpha, edgecolors=platformEdgeColor))
+	ax, legCollection, legLabels = plotLegs(ax, Base, platform_coords, legLengths, assemblyGeometry)
 
 	return ax, basePoly, platformPoly, legCollection, legLabels
 

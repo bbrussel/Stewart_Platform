@@ -153,8 +153,6 @@ def calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, pl
 
 	transformedBase = np.matmul(baseR, B) #Transform the home base position to return to be plotted etc.
 
-
-
 	platformTrans = np.transpose(platformTranslationVector)
 	platformRotation = np.transpose(platformRotationVector)
 	platformRotationX = rotX(platformRotation[0]);
@@ -163,7 +161,6 @@ def calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, pl
 
 	platformR = np.matmul(np.matmul(platformRotationZ, platformRotationY), platformRotationX)
 
-
 	# Get leg length for each leg.  np.newaxis is used to increase dimensions of an array.  axis=1 seems to choose whcih axis to expand into.
 
 	platformTranslationContribution = np.repeat(platformTrans[:, np.newaxis], 6, axis=1)
@@ -171,16 +168,15 @@ def calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, pl
 
 	platformRotationContribution = np.matmul(platformR, P)
 
-
 	l = platformTranslationContribution + platformHomePositionContribution + platformRotationContribution - transformedBase
-
 
 	legLengths = np.linalg.norm(l, axis=0)
 
+	platform_coords = l + transformedBase
 
-	L = l + transformedBase
 
-	return L, legLengths, transformedBase
+
+	return platform_coords, legLengths, transformedBase
 
 
 def getElevation(X, Y, Z):
@@ -219,8 +215,6 @@ def calcPlatformPointingVector(platformOrientation, platform_home_transformation
 	deltaY = PV.tip[1]-PV.home[1]
 	deltaZ = PV.tip[2]-PV.home[2]
 
-
-
 	PV.azimuthAngle = getAzimuth(deltaX, deltaY)
 	PV.elevationAngle = getElevation(deltaX, deltaY, deltaZ)
 	# if plotPointingVector == True:
@@ -235,29 +229,29 @@ def PerformCalcs(baseOrientation, platformOrientation, assemblyGeometry):
 	printy("Base anchor half-angle = [cB]baseAnchorAngleDegrees@ = " + "{0:.1f}".format(assemblyGeometry.baseAnchorAngleDegrees) + u'\N{DEGREE SIGN}')
 	printy("Platform anchor half-angle = [cB]platformAnchorAngleDegrees@ = " + "{0:.1f}".format(assemblyGeometry.platformAnchorAngleDegrees) + u'\N{DEGREE SIGN}')
 	printy("Actuator Home length = [cB]actuatorHomeLength@ = " + str(assemblyGeometry.actuatorHomeLength) + "mm")
+	printy("Actuator Min length = [cB]actuatorClosedLength@ = " + str(assemblyGeometry.actuatorClosedLength) + "mm")
+	printy("Actuator Max length = [cB]actuatorFullLength@ = " + str(assemblyGeometry.actuatorFullLength) + "mm")
 	printy("System z-axis reference orientation = [cB]refRotationDegrees@ = " + str(assemblyGeometry.refRotationDegrees) + u'\N{DEGREE SIGN}')
+
 	printy("\nInitializing platform data", "cB")
 
 	B = calculateB(assemblyGeometry.psi_B, assemblyGeometry.r_B) # Calculates Base corner coords prior to applying tranforms for yaw, pitch, roll, etc.
 
 	P = calculateP(assemblyGeometry.psi_P, assemblyGeometry.r_P) # Calculates Platform corner coords prior to applying tranforms for yaw, pitch, roll, etc.
 
-
 	# Definition of the platform home position.
 	z = np.sqrt(assemblyGeometry.actuatorHomeLength**2 - (P[0] - B[0])**2 - (P[1] - B[1])**2)
-
 
 	# This is the transform to move P created above to its home position.
 	platform_home_transformation = np.array([0, 0, z[0]])
 
-	
 	printy("Calculating Leg Lengths", "cB")
-	L, legLengths, B = calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, platformOrientation)
+	platform_coords, legLengths, base_coords = calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, platformOrientation)
 
 	printy("Calculating Pointing Vector", "cB")
 	PV = calcPlatformPointingVector(platformOrientation, platform_home_transformation)
 
 	printy("Generating Plot Info Message", "cB")
-	dataString = plottingTools.generateDataString(platformOrientation, baseOrientation, legLengths, PV.azimuthAngle, PV.elevationAngle)
+	dataString = plottingTools.generateDataString(platformOrientation, baseOrientation, platform_coords, base_coords, legLengths, PV.azimuthAngle, PV.elevationAngle)
 
-	return L, legLengths, B, PV, dataString
+	return platform_coords, legLengths, base_coords, PV, dataString

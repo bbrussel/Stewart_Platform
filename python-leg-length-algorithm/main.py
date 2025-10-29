@@ -51,8 +51,8 @@ class SP_assemblyGeometry():
 ######################################################################################################################################
 #Initialization Variables:
 
-actuateLegs = True
-generatePlot = False
+actuateLegs = False
+generatePlot = True
 comport = "COM3"
 
 assemblyGeometry = SP_assemblyGeometry()
@@ -80,8 +80,9 @@ assemblyGeometry.faultMinLength = assemblyGeometry.actuatorClosedLength + assemb
 assemblyGeometry.faultMaxLength = assemblyGeometry.actuatorFullLength - assemblyGeometry.stroke*assemblyGeometry.actuatorStrokeFaultMargin
 
 
-def processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs):
-	L, legLengths, B, PV, dataString = stewartCalculations.PerformCalcs(baseOrientation=baseOrientation, platformOrientation=platformOrientation, assemblyGeometry=assemblyGeometry)
+def processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs):
+
+	platform_coords, legLengths, base_coords, PV, dataString = stewartCalculations.PerformCalcs(baseOrientation=baseOrientation, platformOrientation=platformOrientation, assemblyGeometry=assemblyGeometry)
 
 	if actuateLegs:
 		if (actuatorCommander.validateLegLengths(legLengths, assemblyGeometry)):
@@ -94,7 +95,7 @@ def processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser,
 		print(",".join(f"{x:.1f}" for x in legLengths))
 
 	if generatePlot:
-		plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, L=L, legLengths=legLengths, B=B, PV=PV, dataString=dataString, assemblyGeometry=assemblyGeometry)
+		plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, platform_coords=platform_coords, legLengths=legLengths, base_coords=base_coords, PV=PV, dataString=dataString, assemblyGeometry=assemblyGeometry)
 	else:
 		printy("Not generating plots because generatePlots flag is set to False", "rB")
 		input("Press Enter to continue to next pose...")
@@ -111,6 +112,8 @@ def demo():
 		ser.reset_output_buffer()
 		# ser = actuatorCommander.sendHome(assemblyGeometry, ser)
 		# ser = actuatorCommander.sendHomeSingleLegWFeedback(assemblyGeometry, ser)
+	else:
+		ser = None
 
 	baseOrientation = orientation() #Initialize orientation class for base
 	baseOrientation.xTranslation = 0
@@ -129,63 +132,85 @@ def demo():
 	platformOrientation.pitchDegrees = 0.0
 	platformOrientation.rollDegrees = 0.0
 	platformOrientation.yawDegrees = 0.0
-	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
-	platformOrientation.zTranslation = 30.0
-	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# platformOrientation.zTranslation = 30.0
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
-	platformOrientation.zTranslation = 20.0
-	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# platformOrientation.zTranslation = 20.0
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
-	platformOrientation.zTranslation = 10.0
-	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# platformOrientation.zTranslation = 10.0
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
-	platformOrientation.zTranslation = 0.0
-	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# platformOrientation.zTranslation = 0.0
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
-	platformOrientation.zTranslation = -10.0
-	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# platformOrientation.zTranslation = -10.0
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 
-	# platformOrientation.pitchDegrees = 10.0
-	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# # platformOrientation.pitchDegrees = 10.0
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	# platformOrientation.pitchDegrees = -10.0
-	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	# platformOrientation.pitchDegrees = -5.0
 	# platformOrientation.rollDegrees = 3.0
-	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	# platformOrientation.zTranslation = 3.0
-	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	# platformOrientation.zTranslation = 6.0
-	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	# platformOrientation.zTranslation = 9.0
-	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	# platformOrientation.pitchDegrees = -8.0
 	# platformOrientation.rollDegrees = 1.0
-	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	# platformOrientation.zTranslation = 15.0
-	# ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
-	platformOrientation.xTranslation = 0.0
-	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 0.0
-	platformOrientation.pitchDegrees = 0.0
-	platformOrientation.rollDegrees = 0.0
-	platformOrientation.yawDegrees = 0.0
-	ser = processMovement(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	# platformOrientation.xTranslation = 0.0
+	# platformOrientation.yTranslation = 0.0
+	# platformOrientation.zTranslation = 0.0
+	# platformOrientation.pitchDegrees = 0.0
+	# platformOrientation.rollDegrees = 0.0
+	# platformOrientation.yawDegrees = 0.0
+	# ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 
-	print("Closing serial port")
-	ser.close()
+	# print("Closing serial port")
+	# ser.close()
 
 	printy("Done...", "cB")
 
 
-demo()
+def just_plot():
+	ser = None
+	baseOrientation = orientation() #Initialize orientation class for base
+	baseOrientation.xTranslation = 0
+	baseOrientation.yTranslation = 0
+	baseOrientation.zTranslation = 0
+	baseOrientation.pitchDegrees = 0
+	baseOrientation.rollDegrees = 0
+	baseOrientation.yawDegrees = 0
+
+	platformOrientation = orientation() #Initialize orientation class for platform
+
+	platformOrientation.xTranslation = 0.0
+	platformOrientation.yTranslation = 0.0
+	platformOrientation.zTranslation = 52.2
+	platformOrientation.pitchDegrees = 0.0
+	platformOrientation.rollDegrees = 0.0
+	platformOrientation.yawDegrees = 0.0
+	ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+
+	printy("Done...", "cB")
+
+just_plot()
