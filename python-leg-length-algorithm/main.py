@@ -205,7 +205,7 @@ def just_plot():
 
 	platformOrientation.xTranslation = 0.0
 	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 52.2
+	platformOrientation.zTranslation = 0.0
 	platformOrientation.pitchDegrees = 0.0
 	platformOrientation.rollDegrees = 0.0
 	platformOrientation.yawDegrees = 0.0
