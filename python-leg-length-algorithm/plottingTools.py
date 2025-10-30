@@ -37,19 +37,21 @@ def plotLegs(ax, vec_arr_origin, vec_arr_dest, legLengths, assemblyGeometry):
 
 		if (legLengths[i] < assemblyGeometry.warningMaxLength) & (legLengths[i] > assemblyGeometry.warningMinLength):
 			leg = ax.plot([vec_arr_origin[0, i] , vec_arr_dest[0, i]], [vec_arr_origin[1, i], vec_arr_dest[1, i]], [vec_arr_origin[2, i],vec_arr_dest[2, i]], color=legDefaultColor, linewidth=1)
-			print("{:.1f}".format(legLengths[i]))
+			print("{:.1f} ({:.1f}%)".format(legLengths[i], (legLengths[i]-assemblyGeometry.actuatorClosedLength) / (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength) * 100))
 		elif (legLengths[i] < assemblyGeometry.faultMaxLength) & (legLengths[i] > assemblyGeometry.faultMinLength):
 			leg = ax.plot([vec_arr_origin[0, i] , vec_arr_dest[0, i]], [vec_arr_origin[1, i], vec_arr_dest[1, i]], [vec_arr_origin[2, i],vec_arr_dest[2, i]], color=legWarningColor, linewidth=1)
-			printy("{:.1f}".format(legLengths[i]), "oB")
-		else:
+			printy("{:.1f} ({:.1f}%)".format(legLengths[i], (legLengths[i]-assemblyGeometry.actuatorClosedLength) / (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength) * 100), "oB")
+		elif (legLengths[i] < assemblyGeometry.actuatorFullLength) & (legLengths[i] > assemblyGeometry.actuatorClosedLength):
 			leg = ax.plot([vec_arr_origin[0, i] , vec_arr_dest[0, i]], [vec_arr_origin[1, i], vec_arr_dest[1, i]], [vec_arr_origin[2, i],vec_arr_dest[2, i]], color=legFaultColor, linewidth=2)
-			printy("{:.1f}".format(legLengths[i]), "rB")
+			printy("{:.1f} ({:.1f}%)".format(legLengths[i], (legLengths[i]-assemblyGeometry.actuatorClosedLength) / (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength) * 100), "rB")
+		else:
+			printy("Leg " + str(i+1) + " length of " + "{:.1f}".format(legLengths[i]) + "mm is outside of actuator range!", "rB")
 		legCollection.append(leg[0])
 
 	return ax, legCollection, legLabels
 
 
-def generateDataString(platformOrientation, baseOrientation, platform_coords, base_coords, legLengths, azimuth, elevation):
+def generateDataString(platformOrientation, baseOrientation, platform_coords, base_coords, legLengths, azimuth, elevation, actuatorFullLength, actatorClosedLength):
 
 	dataString = "Base:\n"
 	dataString += "Roll: " + "{0:.1f}".format(baseOrientation.rollDegrees) + "$^\circ$\n"
@@ -67,11 +69,13 @@ def generateDataString(platformOrientation, baseOrientation, platform_coords, ba
 	
 	dataString += f"\nMax Z: {np.max(platform_coords[2, :]):.1f}\n"
 	dataString += f"Min Z: {np.min(platform_coords[2, :]):.1f}\n"
+	dataString += f"Center Z: {np.mean(platform_coords[2, :]):.1f}\n"
 
 	dataString += "\nLeg Lengths:\n"
 	counter = 1
 	for leg in legLengths:
-		dataString += "(" + str(counter) + ") " +  "{0:.1f}".format(leg) + "\n"
+		percent = (leg-actatorClosedLength) / (actuatorFullLength-actatorClosedLength) * 100
+		dataString += f"({counter}) {leg:.1f} ({percent:.1f}%)\n"
 		counter += 1
 
 	return dataString

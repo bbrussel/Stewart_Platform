@@ -11,7 +11,7 @@ def sendActuationCommand(legLengths, assemblyGeometry, ser):
     ser.write(command.encode("ascii"))
     ser.flush()
 
-    print(command.strip())
+    print("Command: " + command.strip())
     return ser
 
 def validateLegLengths(legLengths, assemblyGeometry):

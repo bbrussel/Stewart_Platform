@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import serial
 from printy import printy
 import pyfiglet
+import json
+
+
 os.system('cls')
 print(pyfiglet.figlet_format("Soloh Research", font = "slant"))
 # np.seterr(divide='ignore')
@@ -54,19 +57,22 @@ class SP_assemblyGeometry():
 actuateLegs = False
 generatePlot = True
 comport = "COM3"
-
+config_file = "configs/OSBS_24.json"
+with open(config_file, "r") as f:
+    platform_config_dict = json.load(f)
 assemblyGeometry = SP_assemblyGeometry()
-assemblyGeometry.r_B = 215           # Base radius
-assemblyGeometry.r_P = 215           # Platform Radius
-assemblyGeometry.actuatorClosedLength = 152
-assemblyGeometry.actuatorFullLength = 252
 
-assemblyGeometry.actuatorStrokeFaultMargin = .01
-assemblyGeometry.actuatorStrokeWarningMargin = .1
+#Config Parameters:
+assemblyGeometry.r_B = platform_config_dict["r_B"]
+assemblyGeometry.r_P = platform_config_dict["r_P"]
+assemblyGeometry.actuatorClosedLength = platform_config_dict["actuatorClosedLength"]
+assemblyGeometry.actuatorFullLength = platform_config_dict["actuatorFullLength"]
+assemblyGeometry.actuatorStrokeFaultMargin = platform_config_dict["actuatorStrokeFaultMargin"]
+assemblyGeometry.actuatorStrokeWarningMargin = platform_config_dict["actuatorStrokeWarningMargin"]
+assemblyGeometry.baseAnchorAngleDegrees = platform_config_dict["baseAnchorAngleDegrees"]
+assemblyGeometry.platformAnchorAngleDegrees = platform_config_dict["platformAnchorAngleDegrees"]
+assemblyGeometry.refRotationDegrees = platform_config_dict["refRotationDegrees"]
 
-assemblyGeometry.baseAnchorAngleDegrees = 60 # full angle from center out to leg pair in degrees
-assemblyGeometry.platformAnchorAngleDegrees = 24 # full angle from center out to leg pair in degrees
-assemblyGeometry.refRotationDegrees = 0    # Assembly oriention around z axis
 
 #Calculated Variables:
 assemblyGeometry.actuatorHomeLength = assemblyGeometry.actuatorClosedLength + (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength)/2
@@ -196,19 +202,19 @@ def just_plot():
 	baseOrientation = orientation() #Initialize orientation class for base
 	baseOrientation.xTranslation = 0
 	baseOrientation.yTranslation = 0
-	baseOrientation.zTranslation = 0
+	baseOrientation.zTranslation = 0.0
 	baseOrientation.pitchDegrees = 0
 	baseOrientation.rollDegrees = 0
 	baseOrientation.yawDegrees = 0
 
 	platformOrientation = orientation() #Initialize orientation class for platform
-
 	platformOrientation.xTranslation = 0.0
 	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 0.0
+	platformOrientation.zTranslation = 44.0
 	platformOrientation.pitchDegrees = 0.0
 	platformOrientation.rollDegrees = 0.0
-	platformOrientation.yawDegrees = 0.0
+	platformOrientation.yawDegrees = 14.0
+
 	ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
 	printy("Done...", "cB")

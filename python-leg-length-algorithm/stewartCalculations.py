@@ -252,6 +252,6 @@ def PerformCalcs(baseOrientation, platformOrientation, assemblyGeometry):
 	PV = calcPlatformPointingVector(platformOrientation, platform_home_transformation)
 
 	printy("Generating Plot Info Message", "cB")
-	dataString = plottingTools.generateDataString(platformOrientation, baseOrientation, platform_coords, base_coords, legLengths, PV.azimuthAngle, PV.elevationAngle)
+	dataString = plottingTools.generateDataString(platformOrientation, baseOrientation, platform_coords, base_coords, legLengths, PV.azimuthAngle, PV.elevationAngle, assemblyGeometry.actuatorFullLength, assemblyGeometry.actuatorClosedLength)
 
 	return platform_coords, legLengths, base_coords, PV, dataString
