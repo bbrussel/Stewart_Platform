@@ -36,16 +36,20 @@ def plotLegs(ax, vec_arr_origin, vec_arr_dest, legLengths, assemblyGeometry):
 		legLabels.append(label)
 
 		if (legLengths[i] < assemblyGeometry.warningMaxLength) & (legLengths[i] > assemblyGeometry.warningMinLength):
+			# if within warning range, Print in degault color
 			leg = ax.plot([vec_arr_origin[0, i] , vec_arr_dest[0, i]], [vec_arr_origin[1, i], vec_arr_dest[1, i]], [vec_arr_origin[2, i],vec_arr_dest[2, i]], color=legDefaultColor, linewidth=1)
 			print("{:.1f} ({:.1f}%)".format(legLengths[i], (legLengths[i]-assemblyGeometry.actuatorClosedLength) / (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength) * 100))
 		elif (legLengths[i] < assemblyGeometry.faultMaxLength) & (legLengths[i] > assemblyGeometry.faultMinLength):
+			#if inside of the fault range, print in warning color
 			leg = ax.plot([vec_arr_origin[0, i] , vec_arr_dest[0, i]], [vec_arr_origin[1, i], vec_arr_dest[1, i]], [vec_arr_origin[2, i],vec_arr_dest[2, i]], color=legWarningColor, linewidth=1)
-			printy("{:.1f} ({:.1f}%)".format(legLengths[i], (legLengths[i]-assemblyGeometry.actuatorClosedLength) / (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength) * 100), "oB")
+			printy("{:.1f} ({:.1f}%) - WARNING".format(legLengths[i], (legLengths[i]-assemblyGeometry.actuatorClosedLength) / (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength) * 100), "oB")
 		elif (legLengths[i] < assemblyGeometry.actuatorFullLength) & (legLengths[i] > assemblyGeometry.actuatorClosedLength):
+			# Print in fault color
 			leg = ax.plot([vec_arr_origin[0, i] , vec_arr_dest[0, i]], [vec_arr_origin[1, i], vec_arr_dest[1, i]], [vec_arr_origin[2, i],vec_arr_dest[2, i]], color=legFaultColor, linewidth=2)
-			printy("{:.1f} ({:.1f}%)".format(legLengths[i], (legLengths[i]-assemblyGeometry.actuatorClosedLength) / (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength) * 100), "rB")
+			printy("{:.1f} ({:.1f}%) - FAULT".format(legLengths[i], (legLengths[i]-assemblyGeometry.actuatorClosedLength) / (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength) * 100), "rB")
 		else:
-			printy("Leg " + str(i+1) + " length of " + "{:.1f}".format(legLengths[i]) + "mm is outside of actuator range!", "rB")
+			leg = ax.plot([vec_arr_origin[0, i] , vec_arr_dest[0, i]], [vec_arr_origin[1, i], vec_arr_dest[1, i]], [vec_arr_origin[2, i],vec_arr_dest[2, i]], color=legFaultColor, linewidth=2)
+			printy("Leg " + str(i+1) + " length of " + "{:.1f}".format(legLengths[i]) + "mm is outside of actuator range completely!", "rB")
 		legCollection.append(leg[0])
 
 	return ax, legCollection, legLabels

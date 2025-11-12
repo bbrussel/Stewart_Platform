@@ -210,10 +210,10 @@ def just_plot():
 	platformOrientation = orientation() #Initialize orientation class for platform
 	platformOrientation.xTranslation = 0.0
 	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 44.0
+	platformOrientation.zTranslation = 0.0
 	platformOrientation.pitchDegrees = 0.0
 	platformOrientation.rollDegrees = 0.0
-	platformOrientation.yawDegrees = 14.0
+	platformOrientation.yawDegrees = 0.0
 
 	ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
 
