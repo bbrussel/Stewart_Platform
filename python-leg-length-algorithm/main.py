@@ -7,7 +7,6 @@ from printy import printy
 import pyfiglet
 import json
 
-
 os.system('cls')
 print(pyfiglet.figlet_format("Soloh Research", font = "slant"))
 # np.seterr(divide='ignore')
@@ -16,99 +15,7 @@ print(pyfiglet.figlet_format("Soloh Research", font = "slant"))
 # np.set_printoptions(linewidth=np.inf) #prevents line wrapping when printing arrays 
 pi = np.pi
 
-import plottingTools
-import stewartCalculations
-import actuatorCommander
-
-
-class orientation():
-	def __init__(self):
-		self.xTranslation = None
-		self.yTranslation = None
-		self.zTranslation = None
-		self.rollDegrees = None
-		self.pitchDegrees = None
-		self.yawDegrees = None
-
-class SP_assemblyGeometry():
-	def __init__(self):
-		self.r_B = None
-		self.r_P = None
-		self.actuatorClosedLength = None
-		self.actuatorFullLength = None
-		self.actuatorStrokeFaultMargin = None
-		self.actuatorStrokeWarningMargin = None
-		self.actuatorHomeLength = None
-		self.baseAnchorAngleDegrees = None
-		self.platformAnchorAngleDegrees = None
-		self.refRotationDegrees = None
-
-		self.stroke = None
-		self.warningMinLength = None
-		self.warningMaxLength = None
-		self.faultMinLength = None
-		self.faultMaxLength = None
-
-
-
-######################################################################################################################################
-#Initialization Variables:
-
-actuateLegs = False
-generatePlot = True
-comport = "COM3"
-config_file = "configs/OSBS_24.json"
-with open(config_file, "r") as f:
-    platform_config_dict = json.load(f)
-assemblyGeometry = SP_assemblyGeometry()
-
-#Config Parameters:
-assemblyGeometry.r_B = platform_config_dict["r_B"]
-assemblyGeometry.r_P = platform_config_dict["r_P"]
-assemblyGeometry.actuatorClosedLength = platform_config_dict["actuatorClosedLength"]
-assemblyGeometry.actuatorFullLength = platform_config_dict["actuatorFullLength"]
-assemblyGeometry.actuatorStrokeFaultMargin = platform_config_dict["actuatorStrokeFaultMargin"]
-assemblyGeometry.actuatorStrokeWarningMargin = platform_config_dict["actuatorStrokeWarningMargin"]
-assemblyGeometry.baseAnchorAngleDegrees = platform_config_dict["baseAnchorAngleDegrees"]
-assemblyGeometry.platformAnchorAngleDegrees = platform_config_dict["platformAnchorAngleDegrees"]
-assemblyGeometry.refRotationDegrees = platform_config_dict["refRotationDegrees"]
-
-
-#Calculated Variables:
-assemblyGeometry.actuatorHomeLength = assemblyGeometry.actuatorClosedLength + (assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength)/2
-assemblyGeometry.psi_B = stewartCalculations.calcPsiB(assemblyGeometry.baseAnchorAngleDegrees, assemblyGeometry.refRotationDegrees) #Radians
-assemblyGeometry.psi_P = stewartCalculations.calcPsiP(assemblyGeometry.platformAnchorAngleDegrees, assemblyGeometry.refRotationDegrees) #Radians
-
-assemblyGeometry.stroke = assemblyGeometry.actuatorFullLength-assemblyGeometry.actuatorClosedLength
-assemblyGeometry.warningMinLength = assemblyGeometry.actuatorClosedLength + assemblyGeometry.stroke*assemblyGeometry.actuatorStrokeWarningMargin
-assemblyGeometry.warningMaxLength = assemblyGeometry.actuatorFullLength - assemblyGeometry.stroke*assemblyGeometry.actuatorStrokeWarningMargin
-assemblyGeometry.faultMinLength = assemblyGeometry.actuatorClosedLength + assemblyGeometry.stroke*assemblyGeometry.actuatorStrokeFaultMargin
-assemblyGeometry.faultMaxLength = assemblyGeometry.actuatorFullLength - assemblyGeometry.stroke*assemblyGeometry.actuatorStrokeFaultMargin
-
-
-def processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs):
-
-	platform_coords, legLengths, base_coords, PV, dataString = stewartCalculations.PerformCalcs(baseOrientation=baseOrientation, platformOrientation=platformOrientation, assemblyGeometry=assemblyGeometry)
-
-	if actuateLegs:
-		if (actuatorCommander.validateLegLengths(legLengths, assemblyGeometry)):
-			# ser = actuatorCommander.sendActuationCommandSingleLegWFeedback(legLengths, assemblyGeometry, ser)
-			ser = actuatorCommander.sendActuationCommand(legLengths, assemblyGeometry, ser)
-		else:
-			printy("Aborting actuation command to fault leg lengths", "rB")
-	else:
-		printy("Not actuating legs because actuateLegs flag is set to False", "rB")
-		print(",".join(f"{x:.1f}" for x in legLengths))
-
-	if generatePlot:
-		plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, platform_coords=platform_coords, legLengths=legLengths, base_coords=base_coords, PV=PV, dataString=dataString, assemblyGeometry=assemblyGeometry)
-	else:
-		printy("Not generating plots because generatePlots flag is set to False", "rB")
-		input("Press Enter to continue to next pose...")
-
-
-	plt.show()
-	return ser
+import classes
 
 def demo():
 
@@ -198,8 +105,21 @@ def demo():
 
 
 def just_plot():
+	actuateLegs = False
+	generatePlot = True
+	comport = "COM3"
+	config_file = r"C:\Users\Brian\Desktop\Stewart Platform\Stewart_Platform\python-leg-length-algorithm\configs\OSBS_24.json"
+	with open(config_file, "r") as f:
+		platform_config_dict = json.load(f)
+
+
+	assemblyGeometry = classes.SP_assemblyGeometry()
+
+	assemblyGeometry.ingest_dict(platform_config_dict)
+
+
 	ser = None
-	baseOrientation = orientation() #Initialize orientation class for base
+	baseOrientation = classes.orientation() #Initialize orientation class for base
 	baseOrientation.xTranslation = 0
 	baseOrientation.yTranslation = 0
 	baseOrientation.zTranslation = 0.0
@@ -207,15 +127,16 @@ def just_plot():
 	baseOrientation.rollDegrees = 0
 	baseOrientation.yawDegrees = 0
 
-	platformOrientation = orientation() #Initialize orientation class for platform
-	platformOrientation.xTranslation = 0.0
+	platformOrientation = classes.orientation() #Initialize orientation class for platform
+
+	platformOrientation.xTranslation = 180.1253
 	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 0.0
+	platformOrientation.zTranslation = -92.8859
 	platformOrientation.pitchDegrees = 0.0
 	platformOrientation.rollDegrees = 0.0
 	platformOrientation.yawDegrees = 0.0
 
-	ser = processPose(platformOrientation, baseOrientation, assemblyGeometry, ser, generatePlot, actuateLegs)
+	ser, results = assemblyGeometry.processPose(platformOrientation, baseOrientation, ser, generatePlot, actuateLegs)
 
 	printy("Done...", "cB")
 

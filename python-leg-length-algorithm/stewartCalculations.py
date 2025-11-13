@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# Based on Stewart Py:
+# https://github.com/Yeok-c/Stewart_Py
+
 import math
 import numpy as np
 from printy import printy
@@ -145,9 +148,9 @@ def calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, pl
 	baseRotationVector = np.array([baseRollRadians, basePitchRadians, baseYawRadians])  #radians
 	baseRotation = np.transpose(baseRotationVector)
 
-	baseRotationX = rotX(baseRotation[0]);
-	baseRotationY = rotY(baseRotation[1]);
-	baseRotationZ = rotZ(baseRotation[2]);
+	baseRotationX = rotX(baseRotation[0])
+	baseRotationY = rotY(baseRotation[1])
+	baseRotationZ = rotZ(baseRotation[2])
 
 	baseR = np.matmul(np.matmul(baseRotationZ, baseRotationY), baseRotationX)
 
@@ -155,9 +158,9 @@ def calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, pl
 
 	platformTrans = np.transpose(platformTranslationVector)
 	platformRotation = np.transpose(platformRotationVector)
-	platformRotationX = rotX(platformRotation[0]);
-	platformRotationY = rotY(platformRotation[1]);
-	platformRotationZ = rotZ(platformRotation[2]);
+	platformRotationX = rotX(platformRotation[0])
+	platformRotationY = rotY(platformRotation[1])
+	platformRotationZ = rotZ(platformRotation[2])
 
 	platformR = np.matmul(np.matmul(platformRotationZ, platformRotationY), platformRotationX)
 
@@ -202,9 +205,9 @@ def calcPlatformPointingVector(platformOrientation, platform_home_transformation
 	platformRotationVector = np.array([platformRollRadians, platformPitchRadians, platformYawRadians])  #radians
 	platformTrans = np.transpose(platformTranslationVector)
 	platformRotation = np.transpose(platformRotationVector)
-	platformRotationX = rotX(platformRotation[0]);
-	platformRotationY = rotY(platformRotation[1]);
-	platformRotationZ = rotZ(platformRotation[2]);
+	platformRotationX = rotX(platformRotation[0])
+	platformRotationY = rotY(platformRotation[1])
+	platformRotationZ = rotZ(platformRotation[2])
 	platformR = np.matmul(np.matmul(platformRotationZ, platformRotationY), platformRotationX)
 	pointingVectorHomeRotatation = np.matmul(platformR, pointingVectorHome)
 	pointingVectorTipRotatation = np.matmul(platformR, pointingVectorTip)
@@ -223,17 +226,20 @@ def calcPlatformPointingVector(platformOrientation, platform_home_transformation
 
 
 def PerformCalcs(baseOrientation, platformOrientation, assemblyGeometry):
-	printy("\nPlatform and Base Geometry Initialization Variables:", "cB")
-	printy("Base Radius = [cB]r_B@ = " + str(assemblyGeometry.r_B) + "mm")
-	printy("Platform Radius = [cB]r_P@ = " + str(assemblyGeometry.r_P) + "mm")
-	printy("Base anchor half-angle = [cB]baseAnchorAngleDegrees@ = " + "{0:.1f}".format(assemblyGeometry.baseAnchorAngleDegrees) + u'\N{DEGREE SIGN}')
-	printy("Platform anchor half-angle = [cB]platformAnchorAngleDegrees@ = " + "{0:.1f}".format(assemblyGeometry.platformAnchorAngleDegrees) + u'\N{DEGREE SIGN}')
-	printy("Actuator Home length = [cB]actuatorHomeLength@ = " + str(assemblyGeometry.actuatorHomeLength) + "mm")
-	printy("Actuator Min length = [cB]actuatorClosedLength@ = " + str(assemblyGeometry.actuatorClosedLength) + "mm")
-	printy("Actuator Max length = [cB]actuatorFullLength@ = " + str(assemblyGeometry.actuatorFullLength) + "mm")
-	printy("System z-axis reference orientation = [cB]refRotationDegrees@ = " + str(assemblyGeometry.refRotationDegrees) + u'\N{DEGREE SIGN}')
+	print_debug = False
 
-	printy("\nInitializing platform data", "cB")
+	if print_debug == True:
+		printy("\nPlatform and Base Geometry Initialization Variables:", "cB")
+		printy("Base Radius = [cB]r_B@ = " + str(assemblyGeometry.r_B) + "mm")
+		printy("Platform Radius = [cB]r_P@ = " + str(assemblyGeometry.r_P) + "mm")
+		printy("Base anchor half-angle = [cB]baseAnchorAngleDegrees@ = " + "{0:.1f}".format(assemblyGeometry.baseAnchorAngleDegrees) + u'\N{DEGREE SIGN}')
+		printy("Platform anchor half-angle = [cB]platformAnchorAngleDegrees@ = " + "{0:.1f}".format(assemblyGeometry.platformAnchorAngleDegrees) + u'\N{DEGREE SIGN}')
+		printy("Actuator Home length = [cB]actuatorHomeLength@ = " + str(assemblyGeometry.actuatorHomeLength) + "mm")
+		printy("Actuator Min length = [cB]actuatorClosedLength@ = " + str(assemblyGeometry.actuatorClosedLength) + "mm")
+		printy("Actuator Max length = [cB]actuatorFullLength@ = " + str(assemblyGeometry.actuatorFullLength) + "mm")
+		printy("System z-axis reference orientation = [cB]refRotationDegrees@ = " + str(assemblyGeometry.refRotationDegrees) + u'\N{DEGREE SIGN}')
+
+		printy("\nInitializing platform data", "cB")
 
 	B = calculateB(assemblyGeometry.psi_B, assemblyGeometry.r_B) # Calculates Base corner coords prior to applying tranforms for yaw, pitch, roll, etc.
 
@@ -245,13 +251,13 @@ def PerformCalcs(baseOrientation, platformOrientation, assemblyGeometry):
 	# This is the transform to move P created above to its home position.
 	platform_home_transformation = np.array([0, 0, z[0]])
 
-	printy("Calculating Leg Lengths", "cB")
+	# printy("Calculating Leg Lengths", "cB")
 	platform_coords, legLengths, base_coords = calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, platformOrientation)
 
-	printy("Calculating Pointing Vector", "cB")
+	# printy("Calculating Pointing Vector", "cB")
 	PV = calcPlatformPointingVector(platformOrientation, platform_home_transformation)
 
-	printy("Generating Plot Info Message", "cB")
+	# printy("Generating Plot Info Message", "cB")
 	dataString = plottingTools.generateDataString(platformOrientation, baseOrientation, platform_coords, base_coords, legLengths, PV.azimuthAngle, PV.elevationAngle, assemblyGeometry.actuatorFullLength, assemblyGeometry.actuatorClosedLength)
 
 	return platform_coords, legLengths, base_coords, PV, dataString
