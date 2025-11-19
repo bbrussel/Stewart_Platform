@@ -65,15 +65,16 @@ class SP_assemblyGeometry():
 	def processPose(self, platformOrientation, baseOrientation, ser, generatePlot, actuateLegs):
 		platform_coords, legLengths, base_coords, PV, dataString = stewartCalculations.PerformCalcs(baseOrientation=baseOrientation, platformOrientation=platformOrientation, assemblyGeometry=self)
 		self.platform_center_z = np.mean(platform_coords[2, :])
+		print(legLengths)
+		speeds = [255,255,255,255,255,255]  #Placeholder speeds for each leg
 		if actuateLegs:
 			if (actuatorCommander.validateLegLengths(legLengths, self)):
-				# ser = actuatorCommander.sendActuationCommandSingleLegWFeedback(legLengths, assemblyGeometry, ser)
-				ser = actuatorCommander.sendActuationCommand(legLengths, self, ser)
+				ser = actuatorCommander.sendActuationCommand(legLengths, speeds, self, ser)
 			else:
 				printy("Aborting actuation command to fault leg lengths", "rB")
-		# else:
-		# 	printy("Not actuating legs because actuateLegs flag is set to False", "rB")
-		# 	print(",".join(f"{x:.1f}" for x in legLengths))
+		else:
+			printy("Not actuating legs because actuateLegs flag is set to False", "rB")
+			print(",".join(f"{x:.1f}" for x in legLengths))
 
 		if generatePlot:
 			plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, platform_coords=platform_coords, legLengths=legLengths, base_coords=base_coords, PV=PV, dataString=dataString, assemblyGeometry=self)
