@@ -14,8 +14,8 @@ pi = np.pi
 import classes
 
 def demo():
-	actuateLegs = True
-	generatePlot = False
+	actuateLegs = False
+	generatePlot = True
 	comport = "COM6"
 
 	config_file = r"C:\Users\Brian\Desktop\Stewart Platform\Stewart_Platform\python-leg-length-algorithm\configs\OSBS_24.json"
@@ -40,6 +40,7 @@ def demo():
 	baseOrientation.pitchDegrees = 0
 	baseOrientation.rollDegrees = 0
 	baseOrientation.yawDegrees = 0
+	baseOrientation.pumpDistance = 0.0
 
 	platformOrientation = classes.orientation() #Initialize orientation class for platform
 	platformOrientation.xTranslation = 0.0
@@ -48,6 +49,7 @@ def demo():
 	platformOrientation.pitchDegrees = 0.0
 	platformOrientation.rollDegrees = 0.0
 	platformOrientation.yawDegrees = 0.0
+	platformOrientation.pumpDistance = 0.0
 
 	ser, results = assemblyGeometry.processPose(platformOrientation, baseOrientation, ser, generatePlot, actuateLegs)
 

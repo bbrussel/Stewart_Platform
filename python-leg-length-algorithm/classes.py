@@ -15,6 +15,7 @@ class orientation():
 		self.rollDegrees = None
 		self.pitchDegrees = None
 		self.yawDegrees = None
+		self.pumpDistance = None
 		
 
 class SP_assemblyGeometry():

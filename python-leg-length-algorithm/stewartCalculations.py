@@ -141,7 +141,6 @@ def calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, pl
 	platformRollRadians = platformOrientation.rollDegrees*np.pi/180  #radians
 	platformRotationVector = np.array([platformRollRadians, platformPitchRadians, platformYawRadians])  #radians
 
-
 	basePitchRadians = baseOrientation.pitchDegrees*np.pi/180  #radians
 	baseYawRadians = baseOrientation.yawDegrees*np.pi/180  #radians
 	baseRollRadians = baseOrientation.rollDegrees*np.pi/180  #radians
@@ -164,20 +163,26 @@ def calculateLegsAndBase(B, P, platform_home_transformation, baseOrientation, pl
 
 	platformR = np.matmul(np.matmul(platformRotationZ, platformRotationY), platformRotationX)
 
+	# Calculate pump vector (along the platform's Z-axis after rotation)
+	pumpDistance = getattr(platformOrientation, 'pumpDistance', 0.0)  # Default to 0 if not set
+	platformZAxis = np.array([0, 0, 1])  # Platform's local Z-axis
+	rotatedZAxis = np.matmul(platformR, platformZAxis)  # Rotate Z-axis with platform
+	pumpVector = rotatedZAxis * pumpDistance  # Scale by pump distance
+
 	# Get leg length for each leg.  np.newaxis is used to increase dimensions of an array.  axis=1 seems to choose whcih axis to expand into.
 
 	platformTranslationContribution = np.repeat(platformTrans[:, np.newaxis], 6, axis=1)
 	platformHomePositionContribution = np.repeat(platform_home_transformation[:, np.newaxis], 6, axis=1)
-
 	platformRotationContribution = np.matmul(platformR, P)
+	
+	# Add pump contribution
+	pumpContribution = np.repeat(pumpVector[:, np.newaxis], 6, axis=1)
 
-	l = platformTranslationContribution + platformHomePositionContribution + platformRotationContribution - transformedBase
+	l = platformTranslationContribution + platformHomePositionContribution + platformRotationContribution + pumpContribution - transformedBase
 
 	legLengths = np.linalg.norm(l, axis=0)
 
 	platform_coords = l + transformedBase
-
-
 
 	return platform_coords, legLengths, transformedBase
 
