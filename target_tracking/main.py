@@ -7,7 +7,7 @@ from util import get_limits
 
 tennis_ball = [64, 186, 156]  # BGR colorspace
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 frame_counter = 0
 processed_frames = 0

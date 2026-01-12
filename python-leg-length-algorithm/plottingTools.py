@@ -103,7 +103,7 @@ def generate3DPlot(InitialViewElevationAngle, InitialViewAzimuthAngle, platform_
 	for mem in plt.gcf().texts:
 		plt.gcf().texts.remove(mem)
 
-	plt.title("Stewart Platform")
+	plt.title(assemblyGeometry.name + " Stewart Platform")
 
 	# img = mpimg.imread('logo.png')
 	# # Create an inset_axes instance with different parameters

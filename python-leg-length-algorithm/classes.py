@@ -20,6 +20,7 @@ class orientation():
 
 class SP_assemblyGeometry():
 	def __init__(self):
+		self.name = None
 		self.r_B = None
 		self.r_P = None
 		self.actuatorClosedLength = None
@@ -39,8 +40,9 @@ class SP_assemblyGeometry():
 
 		self.platform_center_z = None
 
-	def ingest_dict(self, settings_dict):
+	def ingest_dict(self, name, settings_dict):
 		#Config Parameters:
+		self.name = name
 		self.r_B = settings_dict["r_B"]
 		self.r_P = settings_dict["r_P"]
 		self.actuatorClosedLength = settings_dict["actuatorClosedLength"]

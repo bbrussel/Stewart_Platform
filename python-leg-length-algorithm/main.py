@@ -1,6 +1,7 @@
 #!/usr/bin/env python3 
 import numpy as np
 import os
+from pathlib import Path
 import serial
 from printy import printy
 import pyfiglet
@@ -18,12 +19,12 @@ def demo():
 	generatePlot = True
 	comport = "COM6"
 
-	config_file = r"C:\Users\Brian\Desktop\Stewart Platform\Stewart_Platform\python-leg-length-algorithm\configs\OSBS_24.json"
+	config_file = r"C:\Users\Brian\Desktop\Stewart Platform\Stewart_Platform\python-leg-length-algorithm\configs\EDU-1.json"
 	with open(config_file, "r") as f:
 		platform_config_dict = json.load(f)
 	assemblyGeometry = classes.SP_assemblyGeometry()
 
-	assemblyGeometry.ingest_dict(platform_config_dict)
+	assemblyGeometry.ingest_dict(Path(config_file).stem, platform_config_dict)
 	print("Loading settings for platform from " + os.path.basename(config_file))
 
 	if actuateLegs == True:

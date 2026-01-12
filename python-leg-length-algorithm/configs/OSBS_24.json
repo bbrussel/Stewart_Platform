@@ -1,0 +1,11 @@
+{
+    "r_B": 304.8,
+    "r_P": 304.8,
+    "actuatorClosedLength": 347.0,
+    "actuatorFullLength": 500.0,
+    "actuatorStrokeFaultMargin": 0.001,
+    "actuatorStrokeWarningMargin": 0.1,
+    "baseAnchorAngleDegrees": 22.7,
+    "platformAnchorAngleDegrees": 22.7,
+    "refRotationDegrees": 0.0
+}
