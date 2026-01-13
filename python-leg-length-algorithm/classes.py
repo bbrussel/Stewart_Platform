@@ -80,7 +80,12 @@ class SP_assemblyGeometry():
 			print(",".join(f"{x:.1f}" for x in legLengths))
 
 		if generatePlot:
-			plottingTools.generate3DPlot(InitialViewElevationAngle=4, InitialViewAzimuthAngle=-78, platform_coords=platform_coords, legLengths=legLengths, base_coords=base_coords, PV=PV, dataString=dataString, assemblyGeometry=self)
+			elevation_angle = 4 #Default
+			azimuth_angle = -78 #Default
+			# azimuth_angle = 5 #for viewing Y motion
+
+
+			plottingTools.generate3DPlot(InitialViewElevationAngle=elevation_angle, InitialViewAzimuthAngle=azimuth_angle, platform_coords=platform_coords, legLengths=legLengths, base_coords=base_coords, PV=PV, dataString=dataString, assemblyGeometry=self)
 		# else:
 		# 	printy("Not generating plots because generatePlots flag is set to False", "rB")
 			# input("Press Enter to continue to next pose...")

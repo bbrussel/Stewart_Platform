@@ -44,11 +44,11 @@ def demo():
 	baseOrientation.pumpDistance = 0.0
 
 	platformOrientation = classes.orientation() #Initialize orientation class for platform
-	platformOrientation.xTranslation = 0.0
-	platformOrientation.yTranslation = 0.0
-	platformOrientation.zTranslation = 0.0
-	platformOrientation.pitchDegrees = 0.0
-	platformOrientation.rollDegrees = 0.0
+	platformOrientation.xTranslation = -70.0
+	platformOrientation.yTranslation = -280.0
+	platformOrientation.zTranslation = -150.0
+	platformOrientation.pitchDegrees = 10.0
+	platformOrientation.rollDegrees = 10.0
 	platformOrientation.yawDegrees = 0.0
 	platformOrientation.pumpDistance = 0.0
 
